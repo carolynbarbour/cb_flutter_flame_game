@@ -55,18 +55,21 @@ class Player extends SpriteGroupComponent<PlayerState>
 
   @override
   void update(double dt) {
-    // Add a Player to the game: Add game state check
+    if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
 
-    // Add a Player to the game: Add calcualtion for Dash's horizontal velocity
+    _velocity.x = _hAxisInput * jumpSpeed;
 
     final double dashHorizontalCenter = size.x / 2;
 
-    // Add a Player to the game: Add infinite side boundaries logic
-
+    if (position.x < dashHorizontalCenter) {
+      position.x = gameRef.size.x - (dashHorizontalCenter);
+    }
+    if (position.x > gameRef.size.x - dashHorizontalCenter) {
+      position.x = dashHorizontalCenter;
+    }
     // Core gameplay: Add gravity
 
-    // Add a Player to the game: Calculate Dash's current position based on
-    // her velocity over elapsed time since last update cycle
+    position += _velocity * dt;
     super.update(dt);
   }
 
@@ -74,7 +77,18 @@ class Player extends SpriteGroupComponent<PlayerState>
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _hAxisInput = 0;
 
-    // Add a Player to the game: Add keypress logic
+    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      moveLeft();
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      moveRight();
+    }
+
+    // cheat for testing
+    if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
+      //jump();
+    }
 
     return true;
   }
@@ -82,13 +96,17 @@ class Player extends SpriteGroupComponent<PlayerState>
   void moveLeft() {
     _hAxisInput = 0;
 
-    // Add a Player to the game: Add logic for moving left
+    current = PlayerState.left;
+
+    _hAxisInput += movingLeftInput;
   }
 
   void moveRight() {
     _hAxisInput = 0;
 
-    // Add a Player to the game: Add logic for moving right
+    current = PlayerState.right;
+
+    _hAxisInput += movingRightInput;
   }
 
   void resetDirection() {
