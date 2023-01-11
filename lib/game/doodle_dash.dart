@@ -39,7 +39,7 @@ class DoodleDash extends FlameGame
     super.update(dt);
 
     if (gameManager.isGameOver) {
-      overlays.add('GameOverOverlay');
+      overlays.add('gameOverOverlay');
       return;
     }
 
@@ -70,7 +70,10 @@ class DoodleDash extends FlameGame
       }
 
       // Losing the game: Add the first loss condition.
-      // Game over if Dash falls off screen!
+
+      if (player.position.y > _world.size.y) {
+        onLose();
+      }
     }
   }
 
@@ -120,7 +123,10 @@ class DoodleDash extends FlameGame
     overlays.remove('mainMenuOverlay');
   }
 
-  // Losing the game: Add an onLose method
+  void onLose() {
+    gameManager.state = GameState.gameOver;
+    overlays.add('gameOverOverlay');
+  }
 
   void resetGame() {
     startGame();
