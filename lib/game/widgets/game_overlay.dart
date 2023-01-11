@@ -58,55 +58,30 @@ class GameOverlayState extends State<GameOverlay> {
             ),
           ),
           if (isMobile)
-            Positioned(
-              bottom: MediaQuery.of(context).size.height / 4,
-              child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.only(left: 24),
-                            child: GestureDetector(
-                                onTapDown: (details) {
-                                  (widget.game as DoodleDash).player.moveLeft();
-                                },
-                                onTapUp: (details) {
-                                  (widget.game as DoodleDash)
-                                      .player
-                                      .resetDirection();
-                                },
-                                child: Material(
-                                    color: Colors.transparent,
-                                    elevation: 3.0,
-                                    shadowColor: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    child: const Icon(Icons.arrow_left,
-                                        size: 64)))),
-                        Padding(
-                            padding: const EdgeInsets.only(right: 24),
-                            child: GestureDetector(
-                                onTapDown: (details) {
-                                  (widget.game as DoodleDash)
-                                      .player
-                                      .moveRight();
-                                },
-                                onTapUp: (details) {
-                                  (widget.game as DoodleDash)
-                                      .player
-                                      .resetDirection();
-                                },
-                                child: Material(
-                                    color: Colors.transparent,
-                                    elevation: 3.0,
-                                    shadowColor: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    child: const Icon(Icons.arrow_right,
-                                        size: 64))))
-                      ])),
-            ),
+            SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: GestureDetector(
+                    onTapDown: (details) async {
+                      var playerPosition =
+                          (widget.game as DoodleDash).player.position;
+
+                      if (details.globalPosition.dx < playerPosition.x) {
+                        (widget.game as DoodleDash).player.moveLeft();
+                      } else if (details.globalPosition.dx > playerPosition.x) {
+                        (widget.game as DoodleDash).player.moveRight();
+                      }
+
+                      await Future.delayed(Duration(milliseconds: 60), () {
+                        (widget.game as DoodleDash).player.resetDirection();
+                        return;
+                      });
+                    },
+                    onTapUp: (details) {
+                      (widget.game as DoodleDash).player.resetDirection();
+                    },
+                    onTapCancel: () =>
+                        {(widget.game as DoodleDash).player.resetDirection()})),
           if (isPaused)
             Positioned(
               top: MediaQuery.of(context).size.height / 2 - 72.0,
